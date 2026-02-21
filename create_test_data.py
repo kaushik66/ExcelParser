@@ -1,6 +1,7 @@
 import pandas as pd
 import random
 import numpy as np
+import os
 
 def generate_test_data():
     assets = ["Boiler-1", "Boiler-2", "Turbine-A", "Cooling-Tower"]
@@ -71,9 +72,66 @@ def generate_test_data():
     
     return data
 
-def generate_multi_sheet_data_explicit():
-    """Generates an Excel workbook with entirely distinct data sources on different sheets."""
-    with pd.ExcelWriter("complex_multi_sheet.xlsx") as writer:
+def main():
+    raw_data = generate_test_data()
+    # Create output directory
+    output_dir = "test_files"
+    os.makedirs(output_dir, exist_ok=True)
+    
+    # 1. Clean Data (Uses Canonical Names)
+    clean_df = pd.DataFrame({
+        "asset_name": [row["asset"] for row in raw_data],
+        "coal_consumption": [row["coal"] for row in raw_data],
+        "power_generation": [row["power_1"] for row in raw_data],
+        "operating_temperature": [row["temp"] for row in raw_data],
+        "water_flow_rate": [row["water"] for row in raw_data],
+        "emissions_co2": [row["co2"] for row in raw_data],
+        "efficiency": [row["efficiency"] for row in raw_data],
+    })
+    clean_path = os.path.join(output_dir, "clean_data.xlsx")
+    clean_df.to_excel(clean_path, index=False)
+    
+    # 2. Messy Data (Uses Chaotic Variation Names & Duplicate Mapping columns)
+    messy_df = pd.DataFrame({
+        "Equipment ID": [row["asset"] for row in raw_data],
+        "Total Coal Used (Metric Tons)": [row["coal"] for row in raw_data],
+        "Gen. Output [MW]": [row["power_1"] for row in raw_data],
+        "Temp (Celsius)": [row["temp"] for row in raw_data],
+        "Water In (LPH)": [row["water"] for row in raw_data],
+        "Carbon Output": [row["co2"] for row in raw_data],
+        "Power Output": [row["power_1"] for row in raw_data],
+        "MW Generated": [row["power_2"] for row in raw_data],
+        "Op. Efficiency (%)": [row["efficiency"] for row in raw_data]
+    })
+    messy_path = os.path.join(output_dir, "messy_data.xlsx")
+    messy_df.to_excel(messy_path, index=False)
+    
+    # 3. Multi-Asset Data (Tests multi-sheet parsing where sheet names map to assets)
+    multi_asset_path = os.path.join(output_dir, "multi_asset.xlsx")
+    with pd.ExcelWriter(multi_asset_path) as writer:
+        for asset in ["Boiler-1", "Boiler-2", "Turbine-A", "Cooling-Tower"]:
+            asset_data = [row for row in raw_data if row["asset"] == asset]
+            if not asset_data:
+                # Add dummy row if empty so the sheet isn't completely blank
+                asset_data = [raw_data[0]]
+
+            df = pd.DataFrame({
+                "Total Coal Used (Metric Tons)": [row["coal"] for row in asset_data],
+                "Gen. Output [MW]": [row["power_1"] for row in asset_data],
+                "Temp (Celsius)": [row["temp"] for row in asset_data],
+                "Water In (LPH)": [row["water"] for row in asset_data],
+                "Carbon Output": [row["co2"] for row in asset_data],
+                "Power Output": [row["power_1"] for row in asset_data],
+                "MW Generated": [row["power_2"] for row in asset_data],
+                "Op. Efficiency (%)": [row["efficiency"] for row in asset_data]
+            })
+            
+            # Using Sheet Name as Asset Identifier rather than a column
+            df.to_excel(writer, sheet_name=asset, index=False)
+            
+    # 4. Complex Multi-Sheet Data (Tests parser resilience across diverse sheet structures)
+    complex_multi_sheet_path = os.path.join(output_dir, "complex_multi_sheet.xlsx")
+    with pd.ExcelWriter(complex_multi_sheet_path) as writer:
         
         # Sheet 1: Boiler Operations (Clean)
         boiler_df = pd.DataFrame({
@@ -98,62 +156,8 @@ def generate_multi_sheet_data_explicit():
             "Shift hours": [8, 12]
         })
         hr_df.to_excel(writer, sheet_name="HR Roster", index=False)
-        
-def main():
-    raw_data = generate_test_data()
-    
-    # 1. Clean Data (Uses Canonical Names)
-    clean_df = pd.DataFrame({
-        "asset_name": [row["asset"] for row in raw_data],
-        "coal_consumption": [row["coal"] for row in raw_data],
-        "power_generation": [row["power_1"] for row in raw_data],
-        "operating_temperature": [row["temp"] for row in raw_data],
-        "water_flow_rate": [row["water"] for row in raw_data],
-        "emissions_co2": [row["co2"] for row in raw_data],
-        "efficiency": [row["efficiency"] for row in raw_data],
-    })
-    clean_df.to_excel("clean_data.xlsx", index=False)
-    
-    # 2. Messy Data (Uses Chaotic Variation Names & Duplicate Mapping columns)
-    messy_df = pd.DataFrame({
-        "Equipment ID": [row["asset"] for row in raw_data],
-        "Total Coal Used (Metric Tons)": [row["coal"] for row in raw_data],
-        "Gen. Output [MW]": [row["power_1"] for row in raw_data],
-        "Temp (Celsius)": [row["temp"] for row in raw_data],
-        "Water In (LPH)": [row["water"] for row in raw_data],
-        "Carbon Output": [row["co2"] for row in raw_data],
-        "Power Output": [row["power_1"] for row in raw_data],
-        "MW Generated": [row["power_2"] for row in raw_data],
-        "Op. Efficiency (%)": [row["efficiency"] for row in raw_data]
-    })
-    messy_df.to_excel("messy_data.xlsx", index=False)
-    
-    # 3. Multi-Asset Data (Tests multi-sheet parsing where sheet names map to assets)
-    with pd.ExcelWriter("multi_asset.xlsx") as writer:
-        for asset in ["Boiler-1", "Boiler-2", "Turbine-A", "Cooling-Tower"]:
-            asset_data = [row for row in raw_data if row["asset"] == asset]
-            if not asset_data:
-                # Add dummy row if empty so the sheet isn't completely blank
-                asset_data = [raw_data[0]]
-
-            df = pd.DataFrame({
-                "Total Coal Used (Metric Tons)": [row["coal"] for row in asset_data],
-                "Gen. Output [MW]": [row["power_1"] for row in asset_data],
-                "Temp (Celsius)": [row["temp"] for row in asset_data],
-                "Water In (LPH)": [row["water"] for row in asset_data],
-                "Carbon Output": [row["co2"] for row in asset_data],
-                "Power Output": [row["power_1"] for row in asset_data],
-                "MW Generated": [row["power_2"] for row in asset_data],
-                "Op. Efficiency (%)": [row["efficiency"] for row in asset_data]
-            })
             
-            # Using Sheet Name as Asset Identifier rather than a column
-            df.to_excel(writer, sheet_name=asset, index=False)
-            
-    # 4. Complex Multi-Sheet Data (Tests parser resilience across diverse sheet structures)
-    generate_multi_sheet_data_explicit()
-            
-    print("Successfully generated clean_data.xlsx, messy_data.xlsx, multi_asset.xlsx and complex_multi_sheet.xlsx!")
+    print(f"Successfully generated files inside the '{output_dir}/' directory!")
 
 if __name__ == "__main__":
     main()

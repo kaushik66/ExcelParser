@@ -84,7 +84,7 @@ npm run dev
 
 ### Generating Test Data
 
-A utility script is included to generate various Excel workbooks for testing the extraction logic locally. Run `python create_test_data.py` to generate `clean_data.xlsx`, `messy_data.xlsx`, and `multi_asset.xlsx`.
+A utility script is included to generate various Excel workbooks for testing the extraction logic locally. Run `python create_test_data.py` to generate the test spreadsheets. The script will automatically create a `/test_files` directory in the root of the project and output `clean_data.xlsx`, `messy_data.xlsx`, `multi_asset.xlsx`, and `complex_multi_sheet.xlsx` directly into it.
 
 ---
 
