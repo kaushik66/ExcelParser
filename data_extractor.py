@@ -77,9 +77,19 @@ def extract_and_parse_data(worksheet: Worksheet, header_row_index: int, mapping_
         
     # Map out which columns have a canonical parameter to avoid re-checking inside the row loop
     mapped_cols = {}
+    seen_mappings = set()
     for col_idx, mapping in enumerate(mapping_result.mappings):
         if mapping.canonical_parameter:
             mapped_cols[col_idx] = mapping
+            
+            mapping_key = (mapping.canonical_parameter, mapping.asset_name)
+            if mapping_key in seen_mappings:
+                if mapping.asset_name:
+                    warnings.append(f"Duplicate mapping detected: Multiple columns mapped to parameter '{mapping.canonical_parameter}' for asset '{mapping.asset_name}'.")
+                else:
+                    warnings.append(f"Duplicate mapping detected: Multiple columns mapped to parameter '{mapping.canonical_parameter}'.")
+            else:
+                seen_mappings.add(mapping_key)
         else:
             unmapped_columns.append(UnmappedColumn(
                 col=col_idx,
