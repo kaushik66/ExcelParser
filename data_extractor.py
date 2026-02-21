@@ -126,6 +126,11 @@ def extract_and_parse_data(worksheet: Worksheet, header_row_index: int, mapping_
             # Form clean raw representation
             raw_str = str(raw_val).strip() if raw_val is not None else ""
             
+            # Physical validation logic for impossible negative values
+            if parsed_val is not None and parsed_val < 0:
+                if mapping.canonical_parameter in ("coal_consumption", "steam_generation", "power_generation"):
+                    warnings.append(f"Validation Warning: Row {row_idx}, Column {col_idx} has a negative value ({parsed_val}) for '{mapping.canonical_parameter}'.")
+            
             parsed_data.append(ParsedDataPoint(
                 row=row_idx,
                 col=col_idx,
