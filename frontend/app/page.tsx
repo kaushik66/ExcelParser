@@ -7,6 +7,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isCopied, setIsCopied] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -45,6 +46,14 @@ export default function Home() {
       setError(err.message || 'An unexpected error occurred.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCopy = () => {
+    if (result) {
+      navigator.clipboard.writeText(JSON.stringify(result, null, 2));
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
     }
   };
 
@@ -132,7 +141,7 @@ export default function Home() {
 
             {/* Developer Payload View */}
             <section className="bg-[#0A0A0A] rounded-xl shadow-xl border border-gray-800 overflow-hidden flex flex-col">
-              <div className="flex items-center px-4 py-3 bg-[#111111] border-b border-gray-800">
+              <div className="flex items-center justify-between px-4 py-3 bg-[#111111] border-b border-gray-800">
                 <div className="flex items-center gap-3">
                   <div className="flex gap-1.5">
                     <div className="w-3 h-3 rounded-full bg-red-500"></div>
@@ -141,6 +150,16 @@ export default function Home() {
                   </div>
                   <h3 className="text-sm font-medium text-gray-300 font-mono tracking-tight">API Response Payload</h3>
                 </div>
+                <button
+                  onClick={handleCopy}
+                  className={`text-xs px-3 py-1.5 rounded transition-colors border ${
+                    isCopied 
+                      ? 'bg-green-500/10 text-green-400 border-green-500/20' 
+                      : 'bg-gray-800 text-gray-400 border-gray-700 hover:bg-gray-700 hover:text-gray-300'
+                  }`}
+                >
+                  {isCopied ? 'Copied!' : 'Copy'}
+                </button>
               </div>
               <div className="p-4 overflow-auto max-h-[600px] custom-scrollbar">
                 <pre className="text-sm font-mono text-[#D4D4D4] whitespace-pre">
