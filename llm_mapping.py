@@ -2,14 +2,15 @@ import json
 import logging
 import os
 from typing import List, Dict, Any
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 
 from schemas import LLMHeaderMapping
 
 logger = logging.getLogger(__name__)
 
 # Assumes GEMINI_API_KEY is available in the environment variables
-genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
+client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
 
 SYSTEM_PROMPT = """You are an expert industrial data mapping AI.
 Your task is to analyze a list of messy column headers extracted from a factory's operational Excel spreadsheet and map each header to a strict Canonical Parameter Name and an optional Asset Name.
@@ -63,20 +64,16 @@ async def map_headers(
     # We pass the raw headers as a JSON array string to the user prompt
     user_prompt = f"Please map the following extracted column headers:\n{json.dumps(headers, indent=2)}"
     
-    # Initialize the model with the system prompt
-    model = genai.GenerativeModel(
-        model_name="gemini-3-flash",
-        system_instruction=formatted_system_prompt
-    )
-    
     try:
         # Utilize generativeai's structured output support with Pydantic schemas
-        response = await model.generate_content_async(
-            user_prompt,
-            generation_config=genai.GenerationConfig(
+        response = await client.aio.models.generate_content(
+            model="gemini-3-flash",
+            contents=user_prompt,
+            config=types.GenerateContentConfig(
                 response_mime_type="application/json",
                 response_schema=LLMHeaderMapping,
-                temperature=0.0
+                temperature=0.0,
+                system_instruction=formatted_system_prompt
             )
         )
         
