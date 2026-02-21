@@ -37,6 +37,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/")
+def health_check():
+    """Basic health check and welcome endpoint for cloud deployment checks."""
+    return {"status": "ok", "app": "Intelligent Excel Parser API", "version": "1.0.0"}
+
 @app.post("/parse", response_model=ParseResponse)
 async def parse_excel_file(file: UploadFile = File(...)):
     """
