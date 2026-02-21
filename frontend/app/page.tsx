@@ -53,18 +53,9 @@ export default function Home() {
       <div className="max-w-6xl mx-auto space-y-8">
         
         {/* Header Section */}
-        <header className="flex items-center justify-between pb-6 border-b border-gray-200">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 tracking-tight">LatSpace Data Parser</h1>
-            <p className="mt-1 text-sm text-gray-500">Autonomous extraction of factory operational data into a strict taxonomy.</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="relative flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-            </span>
-            <span className="text-sm font-medium text-gray-600">FastAPI Online</span>
-          </div>
+        <header className="flex flex-col items-center justify-center pb-6 border-b border-gray-200 text-center">
+          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Excel Data Parser</h1>
+          <p className="mt-1 text-sm text-gray-500">Autonomous extraction of factory operational data into a strict taxonomy.</p>
         </header>
 
         {/* Upload Form */}
@@ -141,7 +132,7 @@ export default function Home() {
 
             {/* Developer Payload View */}
             <section className="bg-[#0A0A0A] rounded-xl shadow-xl border border-gray-800 overflow-hidden flex flex-col">
-              <div className="flex items-center justify-between px-4 py-3 bg-[#111111] border-b border-gray-800">
+              <div className="flex items-center px-4 py-3 bg-[#111111] border-b border-gray-800">
                 <div className="flex items-center gap-3">
                   <div className="flex gap-1.5">
                     <div className="w-3 h-3 rounded-full bg-red-500"></div>
@@ -149,11 +140,6 @@ export default function Home() {
                     <div className="w-3 h-3 rounded-full bg-green-500"></div>
                   </div>
                   <h3 className="text-sm font-medium text-gray-300 font-mono tracking-tight">API Response Payload</h3>
-                </div>
-                <div>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500/10 text-green-400 border border-green-500/20">
-                    Status 200 OK
-                  </span>
                 </div>
               </div>
               <div className="p-4 overflow-auto max-h-[600px] custom-scrollbar">
