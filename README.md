@@ -6,7 +6,7 @@ An AI-driven, full-stack application that deterministically extracts, maps, and 
 
 > ⚠️ **Note:** This project is currently hosted on a free-tier Render instance. If the service has spun down due to inactivity, it may take between **50 seconds to 1 minute** to wake up the server upon your first request.
 
-## 🌟 Key Features
+## Key Features
 
 ### 1. Robust AI Header Mapping
 
@@ -31,7 +31,7 @@ A Next.js (TypeScript, Tailwind) split-screen dashboard provides executives with
 
 ---
 
-## 🚀 Setup & Installation (Local Development)
+## Setup & Installation (Local Development)
 
 To run the full-stack system on your machine, you will need a valid `GEMINI_API_KEY`.
 
@@ -82,9 +82,13 @@ npm install
 npm run dev
 ```
 
+### Generating Test Data
+
+A utility script is included to generate various Excel workbooks for testing the extraction logic locally. Run `python create_test_data.py` to generate `clean_data.xlsx`, `messy_data.xlsx`, and `multi_asset.xlsx`.
+
 ---
 
-## 🧪 Testing
+## Testing
 
 The parsing engine relies on the core deterministic data extractor to structure the chaotic strings found within Excel cells. A comprehensive `pytest` suite is included to guarantee correctness.
 
