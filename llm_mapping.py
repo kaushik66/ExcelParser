@@ -4,10 +4,14 @@ import os
 from typing import List, Dict, Any
 from google import genai
 from google.genai import types
+from dotenv import load_dotenv
 
 from schemas import LLMHeaderMapping
 
 logger = logging.getLogger(__name__)
+
+# Load the .env file
+load_dotenv()
 
 # Assumes GEMINI_API_KEY is available in the environment variables
 client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
