@@ -66,6 +66,34 @@ def generate_test_data():
     
     return data
 
+def generate_multi_sheet_data_explicit():
+    """Generates an Excel workbook with entirely distinct data sources on different sheets."""
+    with pd.ExcelWriter("complex_multi_sheet.xlsx") as writer:
+        
+        # Sheet 1: Boiler Operations (Clean)
+        boiler_df = pd.DataFrame({
+            "asset_name": ["Boiler-1", "Boiler-2"],
+            "coal_consumption": [245.5, 310.2],
+            "operating_temperature": [355.0, 412.5]
+        })
+        boiler_df.to_excel(writer, sheet_name="Boiler Temps", index=False)
+        
+        # Sheet 2: Turbine Readings (Messy headers)
+        turbine_df = pd.DataFrame({
+            "Unit ID": ["Turbine-A", "Turbine-A"],
+            "Gen. Output [MW]": [150.5, 155.0],
+            "Water In (LPH)": [2500.0, 2600.0]
+        })
+        turbine_df.to_excel(writer, sheet_name="Turbine Output", index=False)
+        
+        # Sheet 3: Irrelevant data (Should be skipped by parser/LLM)
+        hr_df = pd.DataFrame({
+            "Employee Name": ["John Doe", "Jane Smith"],
+            "Department": ["Maintenance", "Operations"],
+            "Shift hours": [8, 12]
+        })
+        hr_df.to_excel(writer, sheet_name="HR Roster", index=False)
+        
 def main():
     raw_data = generate_test_data()
     
@@ -114,7 +142,10 @@ def main():
             # Using Sheet Name as Asset Identifier rather than a column
             df.to_excel(writer, sheet_name=asset, index=False)
             
-    print("Successfully generated clean_data.xlsx, messy_data.xlsx, and multi_asset.xlsx!")
+    # 4. Complex Multi-Sheet Data (Tests parser resilience across diverse sheet structures)
+    generate_multi_sheet_data_explicit()
+            
+    print("Successfully generated clean_data.xlsx, messy_data.xlsx, multi_asset.xlsx and complex_multi_sheet.xlsx!")
 
 if __name__ == "__main__":
     main()
