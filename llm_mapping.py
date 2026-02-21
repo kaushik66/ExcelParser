@@ -71,7 +71,7 @@ async def map_headers(
     try:
         # Utilize generativeai's structured output support with Pydantic schemas
         response = await client.aio.models.generate_content(
-            model="gemini-3-flash",
+            model="gemini-2.5-flash",
             contents=user_prompt,
             config=types.GenerateContentConfig(
                 response_mime_type="application/json",
