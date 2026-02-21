@@ -30,9 +30,10 @@ Asset Registry:
 
 # Rules and Instructions
 1. Fuzzy Matching (Parameter Mapping): Look at the meaning, units, or common abbreviations in the original header to find the best match in the Parameter Registry. For example, "Coal Consump." or "Coal (MT)" should map to "coal_consumption".
-2. Asset Extraction: Often, the asset name or its abbreviation is embedded inside the header. Extract the best matching Asset Name from the Asset Registry if present. For example, "Steam (Boiler 2)" maps to parameter: "steam_generation", asset: "AFBC-2".
-3. Unmappable Columns: If a column header represents metadata, comments, notes, empty strings, dates, or simply does not correspond to any known parameter in the registry, you MUST return `null` for `canonical_parameter` and `asset_name`.
-4. Confidence Scoring: Assign a confidence score based on mapping quality:
+3. Asset Extraction: Often, the asset name or its abbreviation is embedded inside the header. Extract the best matching Asset Name from the Asset Registry if present. For example, "Steam (Boiler 2)" maps to parameter: "steam_generation", asset: "AFBC-2".
+4. Asset Identifier Column: If a column header is strictly meant to identify the Asset Name/Equipment ID for the rows (e.g. "Equipment ID", "Unit Name", "Asset"), map its `canonical_parameter` exactly to the special string `_asset_identifier_` and leave `asset_name` null.
+5. Unmappable Columns: If a column header represents metadata, comments, notes, empty strings, dates, or simply does not correspond to any known parameter in the registry (and is not the asset identifier), you MUST return `null` for `canonical_parameter` and `asset_name`.
+6. Confidence Scoring: Assign a confidence score based on mapping quality:
    - "high": The original header is an exact or near-exact semantic match to the parameter.
    - "medium": The header is somewhat ambiguous or uses an unusual abbreviation, but the mapping is likely correct.
    - "low": It's a best guess, or the intent is unclear.

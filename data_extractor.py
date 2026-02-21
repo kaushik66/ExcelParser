@@ -78,9 +78,12 @@ def extract_and_parse_data(worksheet: Worksheet, header_row_index: int, mapping_
         
     # Map out which columns have a canonical parameter to avoid re-checking inside the row loop
     mapped_cols = {}
+    asset_col_idx = None
     seen_mappings = set()
     for col_idx, mapping in enumerate(mapping_result.mappings):
-        if mapping.canonical_parameter:
+        if mapping.canonical_parameter == "_asset_identifier_":
+            asset_col_idx = col_idx
+        elif mapping.canonical_parameter:
             mapped_cols[col_idx] = mapping
             
             mapping_key = (mapping.canonical_parameter, mapping.asset_name)
@@ -111,6 +114,13 @@ def extract_and_parse_data(worksheet: Worksheet, header_row_index: int, mapping_
         if is_empty_row:
             continue
             
+        # Determine row-level asset name
+        row_asset_name = worksheet.title
+        if asset_col_idx is not None and asset_col_idx < len(row):
+            val = row[asset_col_idx]
+            if val is not None and str(val).strip():
+                row_asset_name = str(val).strip()
+            
         # Iterate over cells horizontally
         for col_idx, raw_val in enumerate(row):
             # Guard against openpyxl returning more columns than we mapped headers for
@@ -130,7 +140,7 @@ def extract_and_parse_data(worksheet: Worksheet, header_row_index: int, mapping_
             
             # Physical validation logic for impossible negative values
             if parsed_val is not None and parsed_val < 0:
-                if mapping.canonical_parameter in ("coal_consumption", "steam_generation", "power_generation"):
+                if mapping.canonical_parameter in ("coal_consumption", "steam_generation", "power_generation", "water_flow_rate", "emissions_co2"):
                     warnings.append(f"Validation Warning: Row {row_idx}, Column {col_idx} has a negative value ({parsed_val}) for '{mapping.canonical_parameter}'.")
             
             data_point = ParsedDataPoint(
@@ -138,7 +148,7 @@ def extract_and_parse_data(worksheet: Worksheet, header_row_index: int, mapping_
                 row=row_idx,
                 col=col_idx,
                 param_name=mapping.canonical_parameter,
-                asset_name=mapping.asset_name,
+                asset_name=mapping.asset_name if mapping.asset_name else row_asset_name,
                 raw_value=raw_str,
                 parsed_value=parsed_val,
                 confidence=mapping.confidence

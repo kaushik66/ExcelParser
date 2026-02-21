@@ -14,7 +14,10 @@ from data_extractor import extract_and_parse_data
 PARAM_REGISTRY = [
   {"name": "coal_consumption", "display_name": "Coal Consumption", "unit": "MT", "category": "input", "section": "COGEN BOILER"},
   {"name": "steam_generation", "display_name": "Steam Generation", "unit": "T/hr", "category": "output", "section": "COGEN BOILER"},
-  {"name": "power_generation", "display_name": "Power Generation", "unit": "MWh", "category": "output", "section": "POWER PLANT"}
+  {"name": "power_generation", "display_name": "Power Generation", "unit": "MWh", "category": "output", "section": "POWER PLANT"},
+  {"name": "operating_temperature", "display_name": "Operating Temperature", "unit": "C", "category": "reading", "section": "COGEN BOILER"},
+  {"name": "water_flow_rate", "display_name": "Water Flow Rate", "unit": "L/hr", "category": "input", "section": "COGEN BOILER"},
+  {"name": "emissions_co2", "display_name": "CO2 Emissions", "unit": "ppm", "category": "output", "section": "ENVIRONMENTAL"}
 ]
 
 ASSET_REGISTRY = [
