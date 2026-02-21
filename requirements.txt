@@ -5,3 +5,5 @@ openpyxl
 google-genai
 python-multipart
 python-dotenv
+pytest
+httpx
