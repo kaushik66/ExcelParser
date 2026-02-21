@@ -37,6 +37,7 @@ class LLMHeaderMapping(BaseModel):
 
 class ParsedDataPoint(BaseModel):
     """Represents a successfully mapped and deterministically parsed data cell."""
+    sheet_name: Optional[str] = Field(None, description="Name of the worksheet.")
     row: int = Field(..., description="The 0-indexed row number of the data cell.")
     col: int = Field(..., description="The 0-indexed column number of the data cell.")
     param_name: str = Field(..., description="The canonical parameter name.")
@@ -47,6 +48,7 @@ class ParsedDataPoint(BaseModel):
 
 class UnmappedColumn(BaseModel):
     """Represents a column that was dropped/ignored based on LLM mapping or logic."""
+    sheet_name: Optional[str] = Field(None, description="Name of the worksheet.")
     col: int = Field(..., description="The 0-indexed column number of the unmapped column.")
     header: str = Field(..., description="The raw header of the unmapped column.")
     reason: str = Field(..., description="Reason for ignoring (e.g., 'No matching parameter found').")

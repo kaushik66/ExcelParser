@@ -93,6 +93,7 @@ def extract_and_parse_data(worksheet: Worksheet, header_row_index: int, mapping_
                 seen_mappings.add(mapping_key)
         else:
             unmapped_columns.append(UnmappedColumn(
+                sheet_name=worksheet.title,
                 col=col_idx,
                 header=mapping.original_header,
                 reason="No matching parameter found"
@@ -133,6 +134,7 @@ def extract_and_parse_data(worksheet: Worksheet, header_row_index: int, mapping_
                     warnings.append(f"Validation Warning: Row {row_idx}, Column {col_idx} has a negative value ({parsed_val}) for '{mapping.canonical_parameter}'.")
             
             data_point = ParsedDataPoint(
+                sheet_name=worksheet.title,
                 row=row_idx,
                 col=col_idx,
                 param_name=mapping.canonical_parameter,
