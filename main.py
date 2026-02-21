@@ -10,7 +10,7 @@ from llm_mapping import map_headers
 from data_extractor import extract_and_parse_data
 
 # The Context Registries (Ground Truth)
-PARAMETER_REGISTRY = [
+PARAM_REGISTRY = [
   {"name": "coal_consumption", "display_name": "Coal Consumption", "unit": "MT", "category": "input", "section": "COGEN BOILER"},
   {"name": "steam_generation", "display_name": "Steam Generation", "unit": "T/hr", "category": "output", "section": "COGEN BOILER"},
   {"name": "power_generation", "display_name": "Power Generation", "unit": "MWh", "category": "output", "section": "POWER PLANT"}
@@ -62,7 +62,7 @@ async def parse_excel_file(file: UploadFile = File(...)):
         # 2. LLM Header Mapping
         mapping_result = await map_headers(
             headers=raw_headers,
-            param_registry=PARAMETER_REGISTRY,
+            param_registry=PARAM_REGISTRY,
             asset_registry=ASSET_REGISTRY
         )
         
