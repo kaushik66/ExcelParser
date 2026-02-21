@@ -56,5 +56,6 @@ class ParseResponse(BaseModel):
     status: str = Field("success", description="Overall execution status ('success' or 'error').")
     header_row: int = Field(..., description="The 0-indexed row number where true headers reside.")
     parsed_data: List[ParsedDataPoint] = Field(default_factory=list)
+    needs_review: List[ParsedDataPoint] = Field(default_factory=list, description="Low confidence mappings requiring human review.")
     unmapped_columns: List[UnmappedColumn] = Field(default_factory=list)
     warnings: List[str] = Field(default_factory=list, description="Parser warnings (e.g., skipped titles, unparseable cells).")

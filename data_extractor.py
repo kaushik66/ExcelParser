@@ -67,6 +67,7 @@ def extract_and_parse_data(worksheet: Worksheet, header_row_index: int, mapping_
         ParseResponse: structured representation of the parsed excel sheet.
     """
     parsed_data = []
+    needs_review = []
     unmapped_columns = []
     warnings = []
     
@@ -131,7 +132,7 @@ def extract_and_parse_data(worksheet: Worksheet, header_row_index: int, mapping_
                 if mapping.canonical_parameter in ("coal_consumption", "steam_generation", "power_generation"):
                     warnings.append(f"Validation Warning: Row {row_idx}, Column {col_idx} has a negative value ({parsed_val}) for '{mapping.canonical_parameter}'.")
             
-            parsed_data.append(ParsedDataPoint(
+            data_point = ParsedDataPoint(
                 row=row_idx,
                 col=col_idx,
                 param_name=mapping.canonical_parameter,
@@ -139,12 +140,18 @@ def extract_and_parse_data(worksheet: Worksheet, header_row_index: int, mapping_
                 raw_value=raw_str,
                 parsed_value=parsed_val,
                 confidence=mapping.confidence
-            ))
+            )
+            
+            if mapping.confidence == "low":
+                needs_review.append(data_point)
+            else:
+                parsed_data.append(data_point)
             
     return ParseResponse(
         status="success",
         header_row=zero_indexed_header_row,
         parsed_data=parsed_data,
+        needs_review=needs_review,
         unmapped_columns=unmapped_columns,
         warnings=warnings
     )
