@@ -8,6 +8,7 @@ export default function Home() {
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [isCopied, setIsCopied] = useState(false);
+  const [showReadable, setShowReadable] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -163,12 +164,66 @@ export default function Home() {
                   {isCopied ? 'Copied!' : 'Copy'}
                 </button>
               </div>
-              <div className="p-4 overflow-auto max-h-[600px] custom-scrollbar">
+              <div className="p-4 overflow-auto max-h-[400px] custom-scrollbar">
                 <pre className="text-sm font-mono text-[#D4D4D4] whitespace-pre">
                   {JSON.stringify(result, null, 2)}
                 </pre>
               </div>
             </section>
+
+            {/* User Readable View Toggle */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+              <button 
+                onClick={() => setShowReadable(!showReadable)}
+                className="w-full px-6 py-4 flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-colors border-b border-gray-200"
+              >
+                <div className="flex items-center gap-3">
+                  <svg className={`w-5 h-5 text-gray-500 transition-transform ${showReadable ? 'rotate-90' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                  <h3 className="text-lg font-semibold text-gray-800">Human Readable Data View</h3>
+                </div>
+                <span className="text-sm text-blue-600 font-medium">{showReadable ? 'Hide Table' : 'Show Table'}</span>
+              </button>
+
+              {showReadable && (
+                <div className="p-0 overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sheet</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Asset</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Parameter</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Raw Input</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Parsed Target</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Confidence</th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {result.parsed_data?.map((point: any, idx: number) => (
+                        <tr key={idx} className="hover:bg-gray-50">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-gray-100">{point.sheet_name || '-'}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 border-r border-gray-100">{point.asset_name || 'Generic'}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 border-r border-gray-100 font-mono">{point.param_name}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 bg-red-50/30 border-r border-red-100 italic">"{point.raw_value}"</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-green-700 font-bold bg-green-50/30 border-r border-green-100">{point.parsed_value}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                              point.confidence === 'high' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                            }`}>
+                              {point.confidence}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  {(!result.parsed_data || result.parsed_data.length === 0) && (
+                     <div className="p-8 text-center text-gray-500">No data points were successfully mapped.</div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>

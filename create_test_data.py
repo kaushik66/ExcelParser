@@ -15,7 +15,8 @@ def generate_test_data():
             "power_2": round(random.uniform(50.0, 250.0), 2), 
             "temp": round(random.uniform(300.0, 600.0), 2),
             "water": round(random.uniform(1000.0, 5000.0), 2),
-            "co2": round(random.uniform(10.0, 50.0), 2)
+            "co2": round(random.uniform(10.0, 50.0), 2),
+            "efficiency": f"{round(random.uniform(75.0, 95.0), 1)}%"
         })
         
     # Row 6: Formatted strings (String parsing test)
@@ -26,7 +27,8 @@ def generate_test_data():
         "power_2": "150 MT",
         "temp": "450,0",
         "water": "2,500.99",
-        "co2": "35.50"
+        "co2": "35.50",
+        "efficiency": "88.5%"
     })
     
     # Row 7: Missing data test
@@ -37,7 +39,8 @@ def generate_test_data():
         "power_2": "",
         "temp": None,
         "water": "",
-        "co2": np.nan
+        "co2": np.nan,
+        "efficiency": "N/A"
     })
     
     # Row 8: Validation warning test (Impossible negative value)
@@ -48,7 +51,8 @@ def generate_test_data():
         "power_2": -50.5,
         "temp": 400.0,
         "water": 2000.0,
-        "co2": 25.0
+        "co2": 25.0,
+        "efficiency": "-10%"
     })
     
     # Row 9: Duplicate mapping test
@@ -61,7 +65,8 @@ def generate_test_data():
         "power_2": 65.0, 
         "temp": 320.0,
         "water": 4500.0,
-        "co2": 15.0
+        "co2": 15.0,
+        "efficiency": "92%"
     })
     
     return data
@@ -105,6 +110,7 @@ def main():
         "operating_temperature": [row["temp"] for row in raw_data],
         "water_flow_rate": [row["water"] for row in raw_data],
         "emissions_co2": [row["co2"] for row in raw_data],
+        "efficiency": [row["efficiency"] for row in raw_data],
     })
     clean_df.to_excel("clean_data.xlsx", index=False)
     
@@ -117,7 +123,8 @@ def main():
         "Water In (LPH)": [row["water"] for row in raw_data],
         "Carbon Output": [row["co2"] for row in raw_data],
         "Power Output": [row["power_1"] for row in raw_data],
-        "MW Generated": [row["power_2"] for row in raw_data]
+        "MW Generated": [row["power_2"] for row in raw_data],
+        "Op. Efficiency (%)": [row["efficiency"] for row in raw_data]
     })
     messy_df.to_excel("messy_data.xlsx", index=False)
     
@@ -136,7 +143,8 @@ def main():
                 "Water In (LPH)": [row["water"] for row in asset_data],
                 "Carbon Output": [row["co2"] for row in asset_data],
                 "Power Output": [row["power_1"] for row in asset_data],
-                "MW Generated": [row["power_2"] for row in asset_data]
+                "MW Generated": [row["power_2"] for row in asset_data],
+                "Op. Efficiency (%)": [row["efficiency"] for row in asset_data]
             })
             
             # Using Sheet Name as Asset Identifier rather than a column

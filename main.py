@@ -17,7 +17,8 @@ PARAM_REGISTRY = [
   {"name": "power_generation", "display_name": "Power Generation", "unit": "MWh", "category": "output", "section": "POWER PLANT"},
   {"name": "operating_temperature", "display_name": "Operating Temperature", "unit": "C", "category": "reading", "section": "COGEN BOILER"},
   {"name": "water_flow_rate", "display_name": "Water Flow Rate", "unit": "L/hr", "category": "input", "section": "COGEN BOILER"},
-  {"name": "emissions_co2", "display_name": "CO2 Emissions", "unit": "ppm", "category": "output", "section": "ENVIRONMENTAL"}
+  {"name": "emissions_co2", "display_name": "CO2 Emissions", "unit": "ppm", "category": "output", "section": "ENVIRONMENTAL"},
+  {"name": "efficiency", "display_name": "Operating Efficiency", "unit": "%", "category": "reading", "section": "PERFORMANCE"}
 ]
 
 ASSET_REGISTRY = [
