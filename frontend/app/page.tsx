@@ -8,7 +8,6 @@ export default function Home() {
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [isCopied, setIsCopied] = useState(false);
-  const [showReadable, setShowReadable] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -142,78 +141,33 @@ export default function Home() {
               </div>
             </section>
 
-            {/* Developer Payload View */}
-            <section className="bg-[#0A0A0A] rounded-xl shadow-xl border border-gray-800 overflow-hidden flex flex-col">
-              <div className="flex items-center justify-between px-4 py-3 bg-[#111111] border-b border-gray-800">
-                <div className="flex items-center gap-3">
-                  <div className="flex gap-1.5">
-                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
+            {/* Split Screen Views */}
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 items-start">
+              
+              {/* Left: User Readable View */}
+              <section className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col h-[600px]">
+                <div className="px-6 py-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between shrink-0">
+                  <div className="flex items-center gap-3">
+                    <h3 className="text-lg font-semibold text-gray-800">Human Readable Data View</h3>
                   </div>
-                  <h3 className="text-sm font-medium text-gray-300 font-mono tracking-tight">API Response Payload</h3>
                 </div>
-                <button
-                  onClick={handleCopy}
-                  className={`text-xs px-3 py-1.5 rounded transition-colors border ${
-                    isCopied 
-                      ? 'bg-green-500/10 text-green-400 border-green-500/20' 
-                      : 'bg-gray-800 text-gray-400 border-gray-700 hover:bg-gray-700 hover:text-gray-300'
-                  }`}
-                >
-                  {isCopied ? 'Copied!' : 'Copy'}
-                </button>
-              </div>
-              <div className="p-4 overflow-auto max-h-[400px] custom-scrollbar">
-                <pre className="text-sm font-mono text-[#D4D4D4] whitespace-pre">
-                  {JSON.stringify(result, null, 2)}
-                </pre>
-              </div>
-            </section>
-
-            {/* User Readable View Toggle */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-              <button 
-                onClick={() => setShowReadable(!showReadable)}
-                className="w-full px-6 py-4 flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-colors border-b border-gray-200"
-              >
-                <div className="flex items-center gap-3">
-                  <svg className={`w-5 h-5 text-gray-500 transition-transform ${showReadable ? 'rotate-90' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                  </svg>
-                  <h3 className="text-lg font-semibold text-gray-800">Human Readable Data View</h3>
-                </div>
-                <span className="text-sm text-blue-600 font-medium">{showReadable ? 'Hide Table' : 'Show Table'}</span>
-              </button>
-
-              {showReadable && (
-                <div className="p-0 overflow-x-auto">
+                <div className="p-0 overflow-auto flex-grow custom-scrollbar-light">
                   <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
+                    <thead className="bg-gray-50 sticky top-0 z-10 shadow-sm">
                       <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sheet</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Asset</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Parameter</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Raw Input</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Parsed Target</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Confidence</th>
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                       {result.parsed_data?.map((point: any, idx: number) => (
                         <tr key={idx} className="hover:bg-gray-50">
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-gray-100">{point.sheet_name || '-'}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 border-r border-gray-100">{point.asset_name || 'Generic'}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 border-r border-gray-100 font-mono">{point.param_name}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 bg-red-50/30 border-r border-red-100 italic">"{point.raw_value}"</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-green-700 font-bold bg-green-50/30 border-r border-green-100">{point.parsed_value}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                              point.confidence === 'high' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                            }`}>
-                              {point.confidence}
-                            </span>
-                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -222,27 +176,68 @@ export default function Home() {
                      <div className="p-8 text-center text-gray-500">No data points were successfully mapped.</div>
                   )}
                 </div>
-              )}
+              </section>
+
+              {/* Right: Developer Payload View */}
+              <section className="bg-[#0A0A0A] rounded-xl shadow-xl border border-gray-800 overflow-hidden flex flex-col h-[600px]">
+                <div className="flex items-center justify-between px-4 py-3 bg-[#111111] border-b border-gray-800 shrink-0">
+                  <div className="flex items-center gap-3">
+                    <div className="flex gap-1.5">
+                      <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                      <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                      <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                    </div>
+                    <h3 className="text-sm font-medium text-gray-300 font-mono tracking-tight">API Response Payload</h3>
+                  </div>
+                  <button
+                    onClick={handleCopy}
+                    className={`text-xs px-3 py-1.5 rounded transition-colors border ${
+                      isCopied 
+                        ? 'bg-green-500/10 text-green-400 border-green-500/20' 
+                        : 'bg-gray-800 text-gray-400 border-gray-700 hover:bg-gray-700 hover:text-gray-300'
+                    }`}
+                  >
+                    {isCopied ? 'Copied!' : 'Copy'}
+                  </button>
+                </div>
+                <div className="p-4 overflow-auto flex-grow custom-scrollbar">
+                  <pre className="text-sm font-mono text-[#D4D4D4] whitespace-pre">
+                    {JSON.stringify(result, null, 2)}
+                  </pre>
+                </div>
+              </section>
             </div>
           </div>
         )}
       </div>
 
       <style dangerouslySetInnerHTML={{__html: `
-        .custom-scrollbar::-webkit-scrollbar {
+        .custom-scrollbar::-webkit-scrollbar,
+        .custom-scrollbar-light::-webkit-scrollbar {
           width: 10px;
           height: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
           background: #0A0A0A; 
         }
+        .custom-scrollbar-light::-webkit-scrollbar-track {
+          background: #F9FAFB; 
+        }
         .custom-scrollbar::-webkit-scrollbar-thumb {
           background: #333333; 
           border-radius: 5px;
           border: 2px solid #0A0A0A;
         }
+        .custom-scrollbar-light::-webkit-scrollbar-thumb {
+          background: #D1D5DB; 
+          border-radius: 5px;
+          border: 2px solid #F9FAFB;
+        }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
           background: #555555; 
+        }
+        .custom-scrollbar-light::-webkit-scrollbar-thumb:hover {
+          background: #9CA3AF; 
         }
       `}} />
     </div>
