@@ -1,5 +1,6 @@
 import uvicorn
 from fastapi import FastAPI, UploadFile, File, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import ValidationError
 import openpyxl
 from io import BytesIO
@@ -26,6 +27,14 @@ app = FastAPI(
     title="Intelligent Excel Parser API",
     description="Maps messy factory data to rigid taxonomy using Gemini and deterministic parsing.",
     version="1.0.0"
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 @app.post("/parse", response_model=ParseResponse)
