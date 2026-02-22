@@ -4,7 +4,7 @@ An AI-driven, full-stack application that deterministically extracts, maps, and 
 
 **Live Demo:** [https://excelparser-ui.onrender.com](https://excelparser-ui.onrender.com)
 
-> ⚠️ **Note:** This project is currently hosted on a free-tier Render instance. If the service has spun down due to inactivity, it may take between **50 seconds to 1 minute** to wake up the server upon your first request.
+> ⚠️ **Note:** This project is currently hosted on a free-tier Render instance. If the service has spun down due to inactivity, it may take between **50 seconds to 1 minute** to wake up the server upon your first request. The backend api might also have some delay which may show initial failure on usage.
 
 ## Key Features
 
